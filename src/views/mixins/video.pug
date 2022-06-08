@@ -1,0 +1,6 @@
+mixin videoMixin(video)
+  a(href=`/videos/${video._id}`)
+    h3=video.title
+  h4=video.description
+  h4 #{video.meta.views} 회
+  hr
