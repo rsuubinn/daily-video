@@ -2,8 +2,15 @@ import Video from "../models/video.js";
 
 export const home = async (req, res) => {
   const videos = await Video.find();
-  console.log(videos);
   return res.render("home", { pageTitle: "Home", videos });
+};
+
+export const watch = async (req, res) => {
+  const {
+    params: { id },
+  } = req;
+  const video = await Video.findOne({ _id: id });
+  return res.render("watch", { pageTitle: video.title, video });
 };
 
 export const search = (req, res) => {};
@@ -16,12 +23,12 @@ export const postUpload = async (req, res) => {
     body: { title, description },
   } = req;
   const {
-    file: { fileName },
+    file: { path },
   } = req;
-  const video = await Video.create({
+  await Video.create({
+    fileUrl: path,
     title,
     description,
   });
-
   return res.redirect("/");
 };

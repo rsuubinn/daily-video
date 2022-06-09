@@ -1,0 +1,12 @@
+extends layouts 
+
+block content
+  video(src="/"+video.fileUrl, controls)
+  h3=video.title
+  h4=video.description
+  h4=video.meta.views
+  h4=video.createdAt
+
+  a(href=`/videos/${video._id}/edit`) 수정하기
+  hr
+  a(href=`/videos/${video._id}/delete`) 삭제하기

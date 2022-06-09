@@ -1,10 +1,14 @@
 import express from "express";
 import { videoUpload } from "../middleware .js";
-import { getUpload, postUpload } from "../controllers/videoController.js";
+import {
+  getUpload,
+  postUpload,
+  watch,
+} from "../controllers/videoController.js";
 
 const videoRouter = express.Router();
 
-// videoRouter.get("/:id([0-9a-f]{24}");
+videoRouter.get("/:id([0-9a-f]{24})", watch);
 
 videoRouter
   .route("/upload")
