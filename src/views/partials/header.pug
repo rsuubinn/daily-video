@@ -4,11 +4,15 @@ header
     ul 
       li
         a(href="/") Home
-      li
-        a(href="/login") Login
-      li
-        a(href="/join") Join
-      li 
-        a(href="/videos/upload") Upload
+      if !loggedIn
+        li
+          a(href="/login") Login
+        li
+          a(href="/join") Join
+      else
+        li 
+          a(href="/videos/upload") Upload
+        li
+          a(href="/users/logout") Logout
       li
         a(href="/search") Search

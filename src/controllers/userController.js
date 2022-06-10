@@ -24,6 +24,8 @@ export const postLogin = async (req, res) => {
       errorMessage: "비밀번호가 틀렸습니다.",
     });
   }
+  req.session.loggedIn = true;
+  req.session.user = user;
 
   return res.redirect("/");
 };
@@ -63,4 +65,11 @@ export const postJoin = async (req, res) => {
       .status(404)
       .render("/join", { pageTitle, errorMessage: error._message });
   }
+};
+
+export const logout = (req, res) => {
+  req.session.loggedIn = false;
+  req.session.user = null;
+  res.locals.loggedInUser = req.session.user;
+  return res.redirect("/");
 };
