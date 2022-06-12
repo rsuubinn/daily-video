@@ -13,7 +13,18 @@ export const watch = async (req, res) => {
   return res.render("watch", { pageTitle: video.title, video });
 };
 
-export const search = (req, res) => {};
+export const search = async (req, res) => {
+  const {
+    query: { keyword },
+  } = req;
+  let videos = [];
+  videos = await Video.find({
+    title: {
+      $regex: new RegExp(`${keyword}`, "i"),
+    },
+  });
+  return res.render("search", { pageTitle: "Search", videos });
+};
 
 export const getUpload = (req, res) => {
   return res.render("upload", { pageTitle: "Upload" });
