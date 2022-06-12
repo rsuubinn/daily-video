@@ -43,3 +43,29 @@ export const postUpload = async (req, res) => {
   });
   return res.redirect("/");
 };
+
+export const getEdit = async (req, res) => {
+  const {
+    params: { id },
+  } = req;
+  const video = await Video.findById({ _id: id });
+  return res.render("edit-video", { pageTitle: "Edit Video", video });
+};
+
+export const postEdit = async (req, res) => {
+  const {
+    params: { id },
+  } = req;
+  const {
+    body: { title, description },
+  } = req;
+  await Video.findByIdAndUpdate(
+    { _id: id },
+    {
+      title,
+      description,
+    },
+    { new: true }
+  );
+  return res.redirect(`/videos/${id}`);
+};
