@@ -2,6 +2,48 @@ import User from "../models/User.js";
 import bcrypt from "bcrypt";
 import fetch from "node-fetch";
 
+export const profile = async (req, res) => {
+  const {
+    params: { id },
+  } = req;
+  const user = await User.findOne({ _id: id });
+  return res.render("profile", { pageTitle: "Profile", user });
+};
+
+export const getEdit = (req, res) => {
+  return res.render("edit-profile", { pageTitle: "Edit Profile" });
+};
+
+export const postEdit = async (req, res) => {
+  const {
+    session: {
+      user: { _id },
+    },
+  } = req;
+  const {
+    body: { name, email },
+  } = req;
+  if (email !== req.session.user.email) {
+    const exists = await User.exists({ email });
+    if (exists) {
+      return res.status(400).render("edit-profile", {
+        pageTitle: "Edit Profile",
+        errorMessage: "이미 사용 중인 이메일 입니다.",
+      });
+    }
+  }
+  const updatedUser = await User.findByIdAndUpdate(
+    _id,
+    {
+      name,
+      email,
+    },
+    { new: true }
+  );
+  req.session.user = updatedUser;
+  return res.redirect(`/users/${_id}`);
+};
+
 export const getLogin = (req, res) => {
   return res.render("login", { pageTitle: "Login" });
 };
@@ -11,14 +53,14 @@ export const postLogin = async (req, res) => {
   const {
     body: { username, password },
   } = req;
-  const user = await User.findOne({ username });
+  const user = await User.findOne({ username, socialOnly: false });
   if (!user) {
     return res.status(400).render("login", {
       pageTitle,
       errorMessage: "아이디가 존재하지 않습니다.",
     });
   }
-  const match = bcrypt.compare(password, user.password);
+  const match = await bcrypt.compare(password, user.password);
   if (!match) {
     return res.status(400).render("login", {
       pageTitle,
@@ -136,6 +178,51 @@ export const postJoin = async (req, res) => {
       .status(404)
       .render("/join", { pageTitle, errorMessage: error._message });
   }
+};
+
+export const getChangePassword = (req, res) => {
+  const pageTitle = "Change Password";
+  if (req.session.user.socialOnly === true) {
+    return res.redirect("/");
+  }
+  return res.render("change-password", { pageTitle });
+};
+export const postChangePassword = async (req, res) => {
+  const pageTitle = "Change Password";
+  const {
+    body: { nowPassword, newPassword, newPasswordConfirm },
+  } = req;
+  const {
+    session: {
+      user: { _id },
+    },
+  } = req;
+  const user = await User.findById(_id);
+  const match = await bcrypt.compare(nowPassword, user.password);
+  if (!match) {
+    return res.status(400).render("change-password", {
+      pageTitle,
+      errrorMessage: "현재 비밀번호가 다릅니다.",
+    });
+  }
+  if (match) {
+    if (nowPassword === newPassword) {
+      return res.status(400).render("change-password", {
+        pageTitle,
+        errrorMessage: "변경하려는 비밀번호가 현재와 일치합니다.",
+      });
+    }
+    if (newPassword !== newPasswordConfirm) {
+      return res.status(400).render("change-password", {
+        pageTitle,
+        errrorMessage: "변경하려는 비밀번호가 일치하지 않습니다.",
+      });
+    }
+  }
+  user.password = newPassword;
+  await user.save();
+  req.session.destroy();
+  return res.redirect("/login");
 };
 
 export const logout = (req, res) => {

@@ -10,6 +10,8 @@ header
         li
           a(href="/join") Join
       else
+        li
+          a(href=`/users/${loggedInUser._id}`) #{loggedInUser.name}의 Profile
         li 
           a(href="/videos/upload") Upload
         li
