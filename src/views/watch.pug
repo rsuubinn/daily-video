@@ -7,6 +7,7 @@ block content
   h4=video.meta.views
   h4=video.createdAt
 
-  a(href=`/videos/${video._id}/edit`) 수정하기
-  hr
-  a(href=`/videos/${video._id}/delete`) 삭제하기
+  if (String(video.owner) === String(loggedInUser._id))
+    a(href=`/videos/${video._id}/edit`) 수정하기
+    hr
+    a(href=`/videos/${video._id}/delete`) 삭제하기

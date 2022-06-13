@@ -1,3 +1,4 @@
+import User from "../models/User.js";
 import Video from "../models/video.js";
 
 export const home = async (req, res) => {
@@ -31,17 +32,33 @@ export const getUpload = (req, res) => {
 };
 export const postUpload = async (req, res) => {
   const {
+    session: {
+      user: { _id },
+    },
+  } = req;
+  const {
     body: { title, description },
   } = req;
   const {
     file: { path },
   } = req;
-  const video = await Video.create({
-    fileUrl: path,
-    title,
-    description,
-  });
-  return res.redirect("/");
+  try {
+    const newVideo = await Video.create({
+      fileUrl: path,
+      title,
+      description,
+      owner: _id,
+    });
+    const user = await User.findById(_id);
+    user.videos.push(newVideo._id);
+    await user.save();
+    return res.redirect("/");
+  } catch (error) {
+    return res.status(400).render("upload", {
+      pageTitle: "Upload Video",
+      errorMessage: error._message,
+    });
+  }
 };
 
 export const getEdit = async (req, res) => {
@@ -49,7 +66,7 @@ export const getEdit = async (req, res) => {
     params: { id },
   } = req;
   const video = await Video.findById({ _id: id });
-  return res.render("edit-video", { pageTitle: "Edit Video", video });
+  return res.render("edit-video", { pageTitle: `Edit ${video.title}`, video });
 };
 
 export const postEdit = async (req, res) => {
@@ -68,4 +85,22 @@ export const postEdit = async (req, res) => {
     { new: true }
   );
   return res.redirect(`/videos/${id}`);
+};
+
+export const deleteVideo = async (req, res) => {
+  const videoId = req.params.id;
+  const userId = req.session.user._id;
+
+  const video = await Video.findById({ _id: videoId });
+  const user = await User.findById({ _id: userId });
+  if (!video) {
+    return res.redirect("/");
+  }
+  if (String(video.owner) !== String(user._id)) {
+    return res.redirect("/");
+  }
+  await Video.findByIdAndDelete({ _id: videoId });
+  user.videos.splice(user.videos.indexOf(videoId), 1);
+  await user.save();
+  return res.redirect("/");
 };
