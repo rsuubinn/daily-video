@@ -17,6 +17,7 @@ app.use(flash());
 app.use(logger);
 app.use(express.urlencoded({ extended: false }));
 app.use("/uploads", express.static("uploads"));
+app.use("/static", express.static("assets")); //static은 브라우저를 위한 url
 app.use(
   session({
     secret: "amdovb8y3i2v23ve",

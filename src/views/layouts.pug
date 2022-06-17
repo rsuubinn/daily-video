@@ -3,9 +3,10 @@ html(lang="ko")
   head
     title #{pageTitle} | #{siteName}
     link(rel="stylesheet" href="https://unpkg.com/mvp.css")
+    link(rel="stylesheet" href="/static/css/styles.css")
   body
     include partials/header.pug
     main
       block content
     include partials/footer.pug
-
+    script(src="/static/js/main.js")

@@ -1,7 +1,13 @@
 extends layouts 
 
 block content
-  video(src="/"+video.fileUrl, controls)
+  div.videoContainer
+    video(src="/"+video.fileUrl, controls)
+    div.videoController
+      button#playBtn play
+      button#muteBtn mute
+
+
   h3=video.title
   h4=video.description
   h4=video.meta.views
@@ -11,3 +17,5 @@ block content
     a(href=`/videos/${video._id}/edit`) 수정하기
     hr
     a(href=`/videos/${video._id}/delete`) 삭제하기
+
+  script(href="/static/js/videoController.js")
