@@ -6,6 +6,10 @@ const muteBtnIcon = muteBtn.querySelector("i");
 const currentTime = document.getElementById("currentTime");
 const totalTime = document.getElementById("totalTime");
 const timeline = document.getElementById("timeline");
+const volume = document.getElementById("volume");
+
+let videoVolume = 0.5;
+video.volume = videoVolume;
 
 const handlePlayBtnClick = () => {
   if (video.paused) {
@@ -14,17 +18,6 @@ const handlePlayBtnClick = () => {
     video.pause();
   }
   playBtnIcon.classList = video.paused ? "fas fa-play" : "fas fa-pause";
-};
-
-const handleMuteBtnClick = () => {
-  if (video.muted) {
-    video.muted = false;
-  } else {
-    video.muted = true;
-  }
-  muteBtnIcon.classList = video.muted
-    ? "fas fa-volume-up"
-    : "fas fa-volume-mute";
 };
 
 const formatTime = (seconds) => {
@@ -42,8 +35,38 @@ const handleCurrentTime = () => {
 };
 
 const handleTimelineChange = (event) => {
-  console.log(event.target.value);
-  video.currentTime = event.target.value;
+  const {
+    target: { value },
+  } = event;
+  video.currentTime = value;
+};
+
+const handleMuteBtnClick = () => {
+  if (video.muted) {
+    video.muted = false;
+  } else {
+    video.muted = true;
+  }
+  muteBtnIcon.classList = video.muted
+    ? "fas fa-volume-up"
+    : "fas fa-volume-mute";
+};
+
+const handleVolumeChange = (event) => {
+  const {
+    target: { value },
+  } = event;
+
+  if (video.muted) {
+    video.muted = false;
+    muteBtn.classList = "fas fa-volume-up";
+  }
+  video.volume = value;
+  videoVolume = value;
+
+  if (Number(value) === 0) {
+    muteBtn.dispatchEvent(new Event("click"));
+  }
 };
 
 playBtn.addEventListener("click", handlePlayBtnClick);
@@ -51,3 +74,4 @@ muteBtn.addEventListener("click", handleMuteBtnClick);
 video.addEventListener("loadedmetadata", handleLoadedMetaData);
 video.addEventListener("timeupdate", handleCurrentTime);
 timeline.addEventListener("input", handleTimelineChange);
+volume.addEventListener("input", handleVolumeChange);
