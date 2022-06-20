@@ -17,7 +17,7 @@ const handlePlayBtnClick = () => {
   } else {
     video.pause();
   }
-  playBtnIcon.classList = video.paused ? "fas fa-play" : "fas fa-pause";
+  playBtnIcon.className = video.paused ? "fas fa-play" : "fas fa-pause";
 };
 
 const formatTime = (seconds) => {
@@ -47,9 +47,10 @@ const handleMuteBtnClick = () => {
   } else {
     video.muted = true;
   }
-  muteBtnIcon.classList = video.muted
+  muteBtnIcon.className = video.muted
     ? "fas fa-volume-up"
     : "fas fa-volume-mute";
+  volume.value = video.muted ? 0 : videoVolume;
 };
 
 const handleVolumeChange = (event) => {
@@ -59,12 +60,13 @@ const handleVolumeChange = (event) => {
 
   if (video.muted) {
     video.muted = false;
-    muteBtn.classList = "fas fa-volume-up";
+    // muteBtnIcon.className = "fas fa-volume-up";
   }
   video.volume = value;
   videoVolume = value;
 
   if (Number(value) === 0) {
+    muteBtnIcon.className = "fas fa-volume-mute";
     muteBtn.dispatchEvent(new Event("click"));
   }
 };
