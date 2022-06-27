@@ -14,6 +14,7 @@ module.exports = {
   entry: {
     main: BASE_JS + "main.js",
     videoController: BASE_JS + "videoController.js",
+    recorder: BASE_JS + "recorder.js",
   },
   output: {
     clean: true,

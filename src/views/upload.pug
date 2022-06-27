@@ -2,9 +2,16 @@ extends layouts.pug
 
 
 block content 
+  div
+    video#preview
+    button#recorderBtn 촬영하기
+
   form(method="POST", enctype="multipart/form-data")
     label(for="video") 비디오 파일
     input(type="file", id="video", name="video")
     input(type="text", placeholder="제목", name="title", id="title")
     input(type="text", placeholder="내용", name="description", id="description")
     input(type="submit", value="upload")
+  
+block scripts
+  script(src="/static/js/recorder.js")
