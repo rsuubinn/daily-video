@@ -18,6 +18,12 @@ app.use(logger);
 app.use(express.urlencoded({ extended: false }));
 app.use("/uploads", express.static("uploads"));
 app.use("/static", express.static("assets")); //static은 브라우저를 위한 url
+app.use("/convert", express.static("node_modules/@ffmpeg/core/dist"));
+app.use((req, res, next) => {
+  res.header("Cross-Origin-Embedder-Policy", "require-corp");
+  res.header("Cross-Origin-Opener-Policy", "same-origin");
+  next();
+});
 app.use(
   session({
     secret: "amdovb8y3i2v23ve",
