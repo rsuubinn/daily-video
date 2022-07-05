@@ -35,6 +35,27 @@ const handleDownload = async (req, res) => {
   ffmpeg.FS("writeFile", files.input, await fetchFile(videoFile));
 
   await ffmpeg.run("-i", files.input, "-r", "60", files.output);
+  await ffmpeg.run(
+    "-i",
+    files.input,
+    "-ss",
+    "00:00:01",
+    "-frames:v",
+    "1",
+    files.thumb
+  );
+
+  const mp4File = ffmpeg.FS("readFile", files.output);
+  const thumbFile = ffmpeg.FS("readFile", files.thumb);
+
+  const mp4Blob = new Blob([mp4File.buffer], { type: "video/mp4" });
+  const thumbBlob = new Blob([thumbFile.buffer], { type: "image/jpg" });
+
+  const mp4Url = URL.createObjectURL(mp4Blob);
+  const thumbUrl = URL.createObjectURL(thumbBlob);
+
+  downloadFile(mp4Url, "My Daily Video.mp4");
+  downloadFile(thumbUrl, "My Thumbnail.jpg");
 };
 
 // 촬영하기 버튼 누를 시 발생되는 이벤트 핸들러
