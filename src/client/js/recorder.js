@@ -56,6 +56,18 @@ const handleDownload = async (req, res) => {
 
   downloadFile(mp4Url, "My Daily Video.mp4");
   downloadFile(thumbUrl, "My Thumbnail.jpg");
+
+  ffmpeg.FS("unlink", files.input);
+  ffmpeg.FS("unlink", files.output);
+  ffmpeg.FS("unlink", files.thumb);
+
+  URL.revokeObjectURL(mp4Url);
+  URL.revokeObjectURL(thumbUrl);
+  URL.revokeObjectURL(videoFile);
+
+  recorderBtn.disabled = false;
+  recorderBtn.innerText = "다시 촬영하기";
+  recorderBtn.addEventListener("click", handleStart);
 };
 
 // 촬영하기 버튼 누를 시 발생되는 이벤트 핸들러
